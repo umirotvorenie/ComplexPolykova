@@ -106,7 +106,7 @@
             wordButton.Name = "wordButton";
             wordButton.Size = new Size(206, 47);
             wordButton.TabIndex = 6;
-            wordButton.Text = "Показать в Word";
+            wordButton.Text = "Вывести в Word";
             wordButton.UseVisualStyleBackColor = true;
             wordButton.Click += wordButton_Click;
             // 
@@ -118,7 +118,7 @@
             excelButton.Name = "excelButton";
             excelButton.Size = new Size(206, 47);
             excelButton.TabIndex = 7;
-            excelButton.Text = "Показать в Excel";
+            excelButton.Text = "Вывести в Excel";
             excelButton.UseVisualStyleBackColor = true;
             excelButton.Click += excelButton_Click;
             // 

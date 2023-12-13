@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "tRqXlAmwo+C6zikhSefV81AFa7yaqP6xn9VYmbRmyUJYKETa0WZLuYrzpJXek88wm4vccjILbcUIgFNYckhn7Q==",
+  "dgSpecHash": "vMUT1ZhM90zurlNaZAV22s2ldHZxXixynjo2JaajCOQu+GotJOghPRoBRY1ou4T5Tp5Q8iFQnTLDdn05L6C6rg==",
   "success": true,
-  "projectFilePath": "C:\\Users\\ybelo\\Source\\Repos\\ComplexPolykova\\Complex-Number-Calculator\\Модуль комплексных\\WinFormsApp2\\WinFormsApp2.csproj",
+  "projectFilePath": "C:\\Users\\ybelo\\source\\repos\\ComplexPolykova\\Complex-Number-Calculator\\Модуль комплексных\\WinFormsApp2\\WinFormsApp2.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\ybelo\\.nuget\\packages\\common.logging\\3.4.1\\common.logging.3.4.1.nupkg.sha512",
     "C:\\Users\\ybelo\\.nuget\\packages\\common.logging.core\\3.4.1\\common.logging.core.3.4.1.nupkg.sha512",
