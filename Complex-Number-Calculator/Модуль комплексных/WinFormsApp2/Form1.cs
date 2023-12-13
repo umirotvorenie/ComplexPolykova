@@ -1,4 +1,4 @@
-using System.Numerics;
+п»їusing System.Numerics;
 using System.Drawing;
 using System.Windows.Forms;
 using iText.Kernel.Pdf;
@@ -21,15 +21,27 @@ namespace WinFormsApp2
         {
             try
             {
+                if (realTextBox.Text == "")
+                {
+                    realTextBox.Text = 0.ToString();
+                }
+                if (imaginaryTextBox.Text == "")
+                {
+                    imaginaryTextBox.Text = 0.ToString();
+                }
                 if (!double.TryParse(realTextBox.Text, out realPart) || !double.TryParse(imaginaryTextBox.Text, out imaginaryPart))
                 {
-                    MessageBox.Show("Введите числа");
+                    MessageBox.Show("Р’РІРµРґРёС‚Рµ С‡РёСЃР»Р°");
+                    realTextBox.Text = "";
+                    imaginaryTextBox.Text = "";
                     return;
                 }
 
                 if (realTextBox.Text.Length > realTextBox.MaxLength || imaginaryTextBox.Text.Length > imaginaryTextBox.MaxLength)
                 {
-                    MessageBox.Show("Превышено максимальное количество символов.");
+                    MessageBox.Show("Р’РІРµРґРµРЅРѕ СЃР»РёС€РєРѕРј Р±РѕР»СЊС€РѕРµ С‡РёСЃР»Рѕ");
+                    realTextBox.Text = "";
+                    imaginaryTextBox.Text = "";
                     return;
                 }
 
@@ -38,14 +50,14 @@ namespace WinFormsApp2
                 modulus = Complex.Abs(complexNumber);
                 argument = Math.Atan2(complexNumber.Imaginary, complexNumber.Real);
 
-                modulusLabel.Text = "Модуль: " + modulus.ToString();
-                argumentLabel.Text = "Главный аргумент: " + argument.ToString();
+                modulusLabel.Text = "РњРѕРґСѓР»СЊ: " + modulus.ToString();
+                argumentLabel.Text = "Р“Р»Р°РІРЅС‹Р№ Р°СЂРіСѓРјРµРЅС‚: " + argument.ToString();
 
                 if (double.IsInfinity(modulus) || double.IsInfinity(argument))
                 {
-                    modulusLabel.Text = "На ноль делить нельзя";
-                    argumentLabel.Text = "На ноль делить нельзя";
-                    MessageBox.Show("На ноль делить нельзя");
+                    modulusLabel.Text = "РќР° РЅРѕР»СЊ РґРµР»РёС‚СЊ РЅРµР»СЊР·СЏ";
+                    argumentLabel.Text = "РќР° РЅРѕР»СЊ РґРµР»РёС‚СЊ РЅРµР»СЊР·СЏ";
+                    MessageBox.Show("РќР° РЅРѕР»СЊ РґРµР»РёС‚СЊ РЅРµР»СЊР·СЏ");
                 }
 
                 realTextBox.ForeColor = Color.Black;
@@ -53,7 +65,7 @@ namespace WinFormsApp2
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Произошла ошибка: " + ex.Message);
+                MessageBox.Show("РџСЂРѕРёР·РѕС€Р»Р° РѕС€РёР±РєР°: " + ex.Message);
             }
         }
 
@@ -69,13 +81,13 @@ namespace WinFormsApp2
         {
             Microsoft.Office.Interop.Word.Application word = new();
             Microsoft.Office.Interop.Word.Document doc = word.Documents.Add();
-            if (modulusLabel.Text == "На ноль делить нельзя" || argumentLabel.Text == "На ноль делить нельзя")
+            if (modulusLabel.Text == "РќР° РЅРѕР»СЊ РґРµР»РёС‚СЊ РЅРµР»СЊР·СЏ" || argumentLabel.Text == "РќР° РЅРѕР»СЊ РґРµР»РёС‚СЊ РЅРµР»СЊР·СЏ")
             {
-                doc.Paragraphs[1].Range.Text = "На ноль делить нельзя";
+                doc.Paragraphs[1].Range.Text = "РќР° РЅРѕР»СЊ РґРµР»РёС‚СЊ РЅРµР»СЊР·СЏ";
             }
             else
             {
-                doc.Paragraphs[1].Range.Text = "Реальная часть: " + realPart + "\nМнимая часть: " + imaginaryPart + "\nМодуль: " + modulus + "\nАргумент: " + argument; // вывод текста
+                doc.Paragraphs[1].Range.Text = "Р РµР°Р»СЊРЅР°СЏ С‡Р°СЃС‚СЊ: " + realPart + "\nРњРЅРёРјР°СЏ С‡Р°СЃС‚СЊ: " + imaginaryPart + "\nРњРѕРґСѓР»СЊ: " + $" в€љ({realPart}^2 + {imaginaryPart}^2) = {modulus}" + "\nРђСЂРіСѓРјРµРЅС‚: " + $"arctan({imaginaryPart} / {realPart}) = {argument} РіСЂР°РґСѓСЃРѕРІ"; // РІС‹РІРѕРґ С‚РµРєСЃС‚Р°
             }
             word.Visible = true;
         }
@@ -85,20 +97,20 @@ namespace WinFormsApp2
             Microsoft.Office.Interop.Excel.Application excel = new();
             Microsoft.Office.Interop.Excel.Workbook workbook = excel.Workbooks.Add();
             Microsoft.Office.Interop.Excel.Worksheet sheet = (Microsoft.Office.Interop.Excel.Worksheet)workbook.ActiveSheet;
-            if (modulusLabel.Text == "На ноль делить нельзя" || argumentLabel.Text == "На ноль делить нельзя")
+            if (modulusLabel.Text == "РќР° РЅРѕР»СЊ РґРµР»РёС‚СЊ РЅРµР»СЊР·СЏ" || argumentLabel.Text == "РќР° РЅРѕР»СЊ РґРµР»РёС‚СЊ РЅРµР»СЊР·СЏ")
             {
-                sheet.Cells[1, 1].Value = "На ноль делить нельзя";
+                sheet.Cells[1, 1].Value = "РќР° РЅРѕР»СЊ РґРµР»РёС‚СЊ РЅРµР»СЊР·СЏ";
             }
             else
             {
-                sheet.Cells[1, 1].Value = "Реальная часть: ";
-                sheet.Cells[2, 1].Value = "Мнимая часть: ";
-                sheet.Cells[3, 1].Value = "Модуль: ";
-                sheet.Cells[4, 1].Value = "Аргумент: ";
+                sheet.Cells[1, 1].Value = "Р РµР°Р»СЊРЅР°СЏ С‡Р°СЃС‚СЊ: ";
+                sheet.Cells[2, 1].Value = "РњРЅРёРјР°СЏ С‡Р°СЃС‚СЊ: ";
+                sheet.Cells[3, 1].Value = "РњРѕРґСѓР»СЊ: ";
+                sheet.Cells[4, 1].Value = "РђСЂРіСѓРјРµРЅС‚: ";
                 sheet.Cells[1, 2].Value = realPart;
                 sheet.Cells[2, 2].Value = imaginaryPart;
-                sheet.Cells[3, 2].Value = modulus;
-                sheet.Cells[4, 2].Value = argument;
+                sheet.Cells[3, 2].Value = $"РњРѕРґСѓР»СЊ: в€љ({realPart}^2 + {imaginaryPart}^2) = {modulus}";
+                sheet.Cells[4, 2].Value = $"РђСЂРіСѓРјРµРЅС‚: arctan({imaginaryPart} / {realPart}) = {argument} РіСЂР°РґСѓСЃРѕРІ";
             }
             sheet.Columns.AutoFit();
             sheet.Rows.AutoFit();
@@ -142,8 +154,8 @@ namespace WinFormsApp2
 
                         document.Add(new Paragraph($"The real part: {realPart}"));
                         document.Add(new Paragraph($"Imaginary part: {imaginaryPart}"));
-                        document.Add(new Paragraph($"Module: {modulus}"));
-                        document.Add(new Paragraph($"Main argument: {argument}"));
+                        document.Add(new Paragraph($"Module: sqrt({realPart}^2 + {imaginaryPart}^2) = {modulus}"));
+                        document.Add(new Paragraph($"Main argument: arctan({imaginaryPart} / {realPart}) = {argument} radians"));
 
                         if (modulusLabel.Text.Contains("\u221E") || argumentLabel.Text.Contains("\u221E"))
                         {
@@ -171,7 +183,7 @@ namespace WinFormsApp2
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Ошибка: " + ex.Message);
+                MessageBox.Show("РћС€РёР±РєР°: " + ex.Message);
             }
         }
     }
