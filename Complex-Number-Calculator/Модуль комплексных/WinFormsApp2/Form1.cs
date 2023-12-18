@@ -5,6 +5,8 @@ using iText.Kernel.Pdf;
 using iText.Layout;
 using iText.Layout.Element;
 using System.Diagnostics;
+using iText.IO.Font;
+using iText.Kernel.Font;
 
 namespace WinFormsApp2
 {
@@ -79,16 +81,49 @@ namespace WinFormsApp2
 
         private void wordButton_Click(object sender, EventArgs e)
         {
+            string phiSymbol = "\u03C6";
             Microsoft.Office.Interop.Word.Application word = new();
             Microsoft.Office.Interop.Word.Document doc = word.Documents.Add();
+
             if (modulusLabel.Text == "На ноль делить нельзя" || argumentLabel.Text == "На ноль делить нельзя")
             {
                 doc.Paragraphs[1].Range.Text = "На ноль делить нельзя";
             }
             else
             {
-                doc.Paragraphs[1].Range.Text = "Реальная часть: " + realPart + "\nМнимая часть: " + imaginaryPart + "\nМодуль: " + $" √({realPart}^2 + {imaginaryPart}^2) = {modulus}" + "\nАргумент: " + $"arctan({imaginaryPart} / {realPart}) = {argument} градусов"; // вывод текста
+                // Вычисление модуля и аргумента
+                Complex complexNumber = new(realPart, imaginaryPart);
+                double modulus = Math.Sqrt(realPart * realPart + imaginaryPart * imaginaryPart);
+                argument = Math.Atan2(complexNumber.Imaginary, complexNumber.Real);
+
+                // Формирование строки с вычислениями
+                string formulaModulus = $"|z| = √a² + b² = √({realPart}² + {imaginaryPart}²) = √({realPart * realPart} + {imaginaryPart * imaginaryPart}) = √({modulus * modulus}) = {modulus}";
+                string formulaArgument = "";
+                if (realPart > 0)
+                {
+                    formulaArgument = $"Теперь вычисляем аргумент. Так как a = {realPart} > 0, то получаем аргумент:\n{phiSymbol} = arctan(b / a) = arctan({imaginaryPart} / {realPart}) = arctan({argument})";
+                }
+                else if (realPart < 0 && imaginaryPart >= 0)
+                {
+                    formulaArgument = $"Теперь вычисляем аргумент. Так как a = {realPart} < 0, b = {imaginaryPart} >= 0, то получаем аргумент:\n{phiSymbol} = π + arctan(b / a) = π + arctan({imaginaryPart} / {realPart}) = π + arctan({argument})";
+                }
+                else if (realPart < 0 && imaginaryPart < 0)
+                {
+                    formulaArgument = $"Теперь вычисляем аргумент. Так как a = {realPart} < 0, b = {imaginaryPart} < 0, то получаем аргумент:\n{phiSymbol} = -π + arctan(b / a) = -π + arctan({imaginaryPart} / {realPart}) = -π + arctan({argument})";
+                }
+                else if (realPart == 0 && imaginaryPart > 0)
+                {
+                    formulaArgument = $"Теперь вычисляем аргумент. Так как a = {realPart} = 0, b = {imaginaryPart} > 0, то получаем аргумент:\n{phiSymbol} = π/2";
+                }
+                else if (realPart == 0 && imaginaryPart < 0)
+                {
+                    formulaArgument = $"Теперь вычисляем аргумент. Так как a = {realPart} = 0, b = {imaginaryPart} < 0,то получаем аргумент:\n{phiSymbol} = -π/2";
+                }
+
+                // Вывод текста и формул в документ Word
+                doc.Paragraphs[1].Range.Text = $"Реальная часть: {realPart}\nМнимая часть: {imaginaryPart}\nКомплексное число состоит из действительной и мнимой части:\na=Rez={realPart}\nb=Imz={imaginaryPart}\nПрименяя формулу вычисления модуля получаем:\n{formulaModulus}\n{formulaArgument}";
             }
+
             word.Visible = true;
         }
 
@@ -122,15 +157,6 @@ namespace WinFormsApp2
             this.Close();
         }
 
-        private void realTextBox_KeyPress(object sender, KeyPressEventArgs e)
-        {
-            if (e.KeyChar == (char)Keys.Enter)
-            {
-                e.Handled = true;
-                imaginaryTextBox.Focus();
-            }
-        }
-
         private void imaginaryTextBox_KeyPress(object sender, KeyPressEventArgs e)
         {
             if (e.KeyChar == (char)Keys.Enter)
@@ -150,16 +176,48 @@ namespace WinFormsApp2
                 {
                     using (var pdf = new PdfDocument(writer))
                     {
+                        string phiSymbol = "\u03C6";
+                        Complex complexNumber = new(realPart, imaginaryPart);
+                        double modulus = Math.Sqrt(realPart * realPart + imaginaryPart * imaginaryPart);
+                        argument = Math.Atan2(complexNumber.Imaginary, complexNumber.Real);
+                        string formulaModulus = $"|z| = √a² + b² = √({realPart}² + {imaginaryPart}²) = √({realPart * realPart} + {imaginaryPart * imaginaryPart}) = √({modulus * modulus}) = {modulus}";
+                        PdfFont timesFont = PdfFontFactory.CreateFont("c:/windows/fonts/times.ttf", PdfEncodings.IDENTITY_H, true);
                         var document = new Document(pdf);
+                        document.Add(new Paragraph($"Реальная часть: {realPart}").SetFont(timesFont));
+                        document.Add(new Paragraph($"Мнимая часть: {imaginaryPart}").SetFont(timesFont));
+                        document.Add(new Paragraph($"Комплексное число состоит из действительной и мнимой части:").SetFont(timesFont));
+                        document.Add(new Paragraph($"a=Rez={realPart}").SetFont(timesFont));
+                        document.Add(new Paragraph($"b=Imz={imaginaryPart}").SetFont(timesFont));
 
-                        document.Add(new Paragraph($"The real part: {realPart}"));
-                        document.Add(new Paragraph($"Imaginary part: {imaginaryPart}"));
-                        document.Add(new Paragraph($"Module: sqrt({realPart}^2 + {imaginaryPart}^2) = {modulus}"));
-                        document.Add(new Paragraph($"Main argument: arctan({imaginaryPart} / {realPart}) = {argument} radians"));
+                        document.Add(new Paragraph($"Применяя формулу вычисления модуля получаем: {formulaModulus}").SetFont(timesFont));
+
+                        string formulaArgument = "";
+                        if (realPart > 0)
+                        {
+                            formulaArgument = $"Теперь вычисляем аргумент. Так как a = {realPart} > 0, то получаем аргумент:\n{phiSymbol} = arctan(b / a) = arctan({imaginaryPart} / {realPart}) = arctan({argument})";
+                        }
+                        else if (realPart < 0 && imaginaryPart >= 0)
+                        {
+                            formulaArgument = $"Теперь вычисляем аргумент. Так как a = {realPart} < 0, b = {imaginaryPart} >= 0, то получаем аргумент:\n{phiSymbol} = π + arctan(b / a) = π + arctan({imaginaryPart} / {realPart}) = π + arctan({argument})";
+                        }
+                        else if (realPart < 0 && imaginaryPart < 0)
+                        {
+                            formulaArgument = $"Теперь вычисляем аргумент. Так как a = {realPart} < 0, b = {imaginaryPart} < 0, то получаем аргумент:\n{phiSymbol} = -π + arctan(b / a) = -π + arctan({imaginaryPart} / {realPart}) = -π + arctan({argument})";
+                        }
+                        else if (realPart == 0 && imaginaryPart > 0)
+                        {
+                            formulaArgument = $"Теперь вычисляем аргумент. Так как a = {realPart} = 0, b = {imaginaryPart} > 0, то получаем аргумент:\n{phiSymbol} = π/2";
+                        }
+                        else if (realPart == 0 && imaginaryPart < 0)
+                        {
+                            formulaArgument = $"Теперь вычисляем аргумент. Так как a = {realPart} = 0, b = {imaginaryPart} < 0,то получаем аргумент:\n{phiSymbol} = -π/2";
+                        }
+
+                        document.Add(new Paragraph(formulaArgument).SetFont(timesFont));
 
                         if (modulusLabel.Text.Contains("\u221E") || argumentLabel.Text.Contains("\u221E"))
                         {
-                            document.Add(new Paragraph("You can't divide by zero!"));
+                            document.Add(new Paragraph("На ноль делить нельзя!"));
                         }
 
                         document.Close();

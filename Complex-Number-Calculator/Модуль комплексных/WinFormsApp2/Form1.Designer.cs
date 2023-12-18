@@ -45,7 +45,6 @@
             realTextBox.Name = "realTextBox";
             realTextBox.Size = new Size(144, 23);
             realTextBox.TabIndex = 0;
-            realTextBox.KeyPress += realTextBox_KeyPress;
             // 
             // imaginaryTextBox
             // 
